@@ -20,18 +20,21 @@ namespace Avalon
         Dictionary<String, Dictionary<String, String>> volumeNew_;
 
         BaseWork baseWork_;
-        string basename_;
+        string _basename;
         string exbase_;
         private System.Collections.Generic.Dictionary<String, String> decTypeDict_;
+        private System.Collections.Generic.Dictionary<String, String> decIdDict_;
         private System.Collections.Generic.Dictionary<String, String> orgNameId_;
         private System.Collections.Generic.Dictionary<String, String> ttnDic_;
         private System.Collections.Generic.Dictionary<String, String> recordDic_;
+        ContragentsEditor _contragentsEditor;
   //      private System.Collections.Generic.Dictionary<String, int> _;
         public BaseEditor(string basenm)
         {
-            basename_ = basenm;
+            _basename = basenm;
             baseWork_ = new BaseWork();
             decTypeDict_ = new Dictionary<String, String>();
+            decIdDict_ = new Dictionary<string, string>();
             orgNameId_ = new Dictionary<String, String>();
             ttnDic_ = new Dictionary<String, String>();
             recordDic_ = new Dictionary<String, String>();
@@ -39,18 +42,23 @@ namespace Avalon
             volumeNew_ = new Dictionary<string, Dictionary<string, string>>();
 
 
-            string Con = "DataSource =" + basename_ + "; Password=7338a7e6-fd3b-49d1-8d90-ddbbc1b39fa1";
+            string Con = "DataSource =" + _basename + "; Password=7338a7e6-fd3b-49d1-8d90-ddbbc1b39fa1";
             InitializeComponent();
             try
             {
-                DataRow[] dec = GetRow("select * from decheader");
+                /*Недавно это делал, но коряво сделано*/
+                DataRow[] dec = GetRow("select id,type_id, PrizPeriod, Yearotch from decheader");
                 for (int i = 0; i < dec.Count(); i++)
                 {
                     //Декларация|Тип
-                    comboBox1.Items.Add(dec[i][0] + "|" + dec[i][1]);
-                    nBaseCombo.Items.Add(dec[i][0] );
-                    decListBox_.Items.Add(dec[i][0]);
-                    decTypeDict_[basename_ + ((int)dec[i][0]).ToString()] = ((int)dec[i][1]).ToString();
+                    string index = dec[i][0].ToString() + " Тип: " + dec[i][1].ToString() + ", " +
+                     (Convert.ToInt32(dec[i][2].ToString()) / 3).ToString() + "кв. " + dec[i][3].ToString() + " год";
+
+                    tp2DeclarationCombo.Items.Add(dec[i][0] + "|" + dec[i][1]);
+                    BaseToComboBox.Items.Add(index);
+                    decListBox_.Items.Add(index);
+                    decIdDict_[_basename + index] = ((int)dec[i][0]).ToString();
+                    decTypeDict_[_basename + index] = ((int)dec[i][1]).ToString();
                 }
 
             }
@@ -59,14 +67,27 @@ namespace Avalon
                 this.Close();
             }
 
+
+            /*Здесь будем описывать редактор Контрагентов*/
+            INNButtonEffect = false;
+            _contragentsEditor = new ContragentsEditor(_basename);
+            _contragentsEditor.GetContragents(ref ContragentBox);
+            _contragentsEditor.GetOperations(ref ComboBoxOperations);
+
         }
         void BaseListToCombo(ComboBox combo, string db )
         {
-                DataRow[] dec = GetRow("select * from decheader",db);
+                /*Очевидно заполнялось методом Copy/Paste*/
+                DataRow[] dec = GetRow("select id,type_id, PrizPeriod, Yearotch from decheader", db);
                 for (int i = 0; i < dec.Count(); i++)
                 {
-                    combo.Items.Add(dec[i][0] );
-                    decTypeDict_[db + ((int)dec[i][0]).ToString()] = ((int)dec[i][1]).ToString();
+
+                    string index = dec[i][0].ToString() + " Тип: " + dec[i][1].ToString() + ", " +
+                        (Convert.ToInt32(dec[i][2].ToString()) / 3).ToString() + "кв. " + dec[i][3].ToString() + " год";
+
+                    combo.Items.Add(index);
+                    decIdDict_[db + index] = ((int)dec[i][0]).ToString();
+                    decTypeDict_[db + index] = ((int)dec[i][1]).ToString();
                 }
         }
         private DataRow[] GetRow(string query, string basename)
@@ -84,12 +105,12 @@ namespace Avalon
         }
         private DataRow[] GetRow(string query)
         {
-            return GetRow(query, basename_);
+            return GetRow(query, _basename);
 
         }
         private DataTable GetDS(string query)
         {
-            string ConSrc = "DataSource =" + basename_ + " ; Password=7338a7e6-fd3b-49d1-8d90-ddbbc1b39fa1";
+            string ConSrc = "DataSource =" + _basename + " ; Password=7338a7e6-fd3b-49d1-8d90-ddbbc1b39fa1";
 
             DataSet DS = new DataSet("table");
             SqlCeConnection con = new SqlCeConnection(ConSrc);
@@ -112,15 +133,15 @@ namespace Avalon
         }
         private void query(string queryst)
         {
-            query(queryst, basename_);
+            query(queryst, _basename);
 
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox1.Items[comboBox1.SelectedIndex].ToString().Length != 0)
+            if (tp2DeclarationCombo.Items[tp2DeclarationCombo.SelectedIndex].ToString().Length != 0)
             {
                 Char[] separator = new Char[] { '|' };
-                string[] dec = comboBox1.Items[comboBox1.SelectedIndex].ToString().Split(separator);
+                string[] dec = tp2DeclarationCombo.Items[tp2DeclarationCombo.SelectedIndex].ToString().Split(separator);
                 //Получаем тип и декларацию
                 int declaration = Convert.ToInt32(dec[0]);
                 int type = Convert.ToInt32(dec[1]);
@@ -159,10 +180,10 @@ namespace Avalon
         private void GetBy(String Field11, String Field12, string name)
         {
    
-            if (comboBox1.Items[comboBox1.SelectedIndex].ToString().Length != 0)
+            if (tp2DeclarationCombo.Items[tp2DeclarationCombo.SelectedIndex].ToString().Length != 0)
             {
                 Char[] separator = new Char[] { '|' };
-                string[] dec = comboBox1.Items[comboBox1.SelectedIndex].ToString().Split(separator);
+                string[] dec = tp2DeclarationCombo.Items[tp2DeclarationCombo.SelectedIndex].ToString().Split(separator);
                 //Получаем тип и декларацию
                 int declaration = Convert.ToInt32(dec[0]);
                 int type = Convert.ToInt32(dec[1]);
@@ -215,10 +236,12 @@ namespace Avalon
                 else
                     prod = "idPost";
 
-                String dec = "decf" + decTypeDict_[basename_+decListBox_.SelectedItem.ToString()];
+                /*Это конструктор запроса, причем примитивный*/
+                String dec = "decf" + decTypeDict_[_basename+decListBox_.SelectedItem.ToString()];
+
                 String query = "select distinct con.Id, con.OrgName, con.Inn, con.Kpp from " + dec
                     + " join wrk_Contragents as con ON con.id = " + dec + "." + prod
-                    + " where Hid = " + decListBox_.SelectedItem.ToString();
+                    + " where Hid = " + decIdDict_[_basename+ decListBox_.SelectedItem.ToString()];
                 DataRow[] orgRow = GetRow(query);
 
                 orgListBox_.Items.Clear();
@@ -262,7 +285,7 @@ namespace Avalon
 
 
 
-                String dec = "decf" + decTypeDict_[basename_+decListBox_.SelectedItem.ToString()];
+                String dec = "decf" + decTypeDict_[_basename+decListBox_.SelectedItem.ToString()];
                 String ttnField, dateField,valField;
                 if (dec == "decf11")
                 {
@@ -277,7 +300,7 @@ namespace Avalon
                     valField = "P212";
                 }
                 String query = "select 1 as id, " + ttnField + "," + dateField + ", sum("+ valField +") from " + dec
-                    + " where Hid = " + decListBox_.SelectedItem.ToString()
+                    + " where Hid = " + decIdDict_[_basename + decListBox_.SelectedItem.ToString()]
                     + " and " + prod + " = " + orgNameId_[orgListBox_.SelectedItem.ToString()]
                     + " group by  " + ttnField + "," + dateField ;
 
@@ -318,7 +341,7 @@ namespace Avalon
 
 
 
-                String dec = "decf" + decTypeDict_[basename_+decListBox_.SelectedItem.ToString()];
+                String dec = "decf" + decTypeDict_[_basename+decListBox_.SelectedItem.ToString()];
                 String valField,ttnField;
                 if (dec == "decf11")
                 {
@@ -332,7 +355,7 @@ namespace Avalon
                 }
 
                 String query = "select id,vidCode, " + valField + "  from " + dec
-                    + " where Hid = " + decListBox_.SelectedItem.ToString()
+                    + " where Hid = " + decIdDict_[ _basename + decListBox_.SelectedItem.ToString()]
                     + " and " + prod + " = " + orgNameId_[orgListBox_.SelectedItem.ToString()]
                     + " and " + ttnField + " = \'" + ttnDic_[ttnListBox_.SelectedItem.ToString()] + "\'"; 
 
@@ -366,7 +389,7 @@ namespace Avalon
                 result = result.TrimEnd(',');
 
 
-                String dec = "decf" + decTypeDict_[basename_+decListBox_.SelectedItem.ToString()];
+                String dec = "decf" + decTypeDict_[_basename+decListBox_.SelectedItem.ToString()];
                 query("delete from " + dec + " where id in (" + result + ")");
                 ttnListBox__SelectedIndexChanged(sender, e);
             }
@@ -383,7 +406,7 @@ namespace Avalon
                 }
                 result = result.TrimEnd(',');
 
-                String dec = "decf" + decTypeDict_[basename_+decListBox_.SelectedItem.ToString()];
+                String dec = "decf" + decTypeDict_[_basename+decListBox_.SelectedItem.ToString()];
                 String ttnField, prod;
                 if (dec == "decf11")
                 {
@@ -400,67 +423,76 @@ namespace Avalon
 
                 query("delete from " + dec + " where " + ttnField + " in (" + result + ")"
                     + " and " + prod + "= " + orgNameId_[orgListBox_.SelectedItem.ToString()]
-                    + " and Hid = " + decListBox_.SelectedItem.ToString());
+                    + " and Hid = " + decIdDict_[_basename + decListBox_.SelectedItem.ToString()]);
                 orgListBox__SelectedIndexChanged(sender, e);
             } catch(Exception ex){}
         }
         private void ContrDel_Click(object sender, EventArgs e)
         {
-            try
+            if (MessageBox.Show("Удалить контрагента(ов)", "Удаление большого объема данных", MessageBoxButtons.YesNo)
+                                 == System.Windows.Forms.DialogResult.Yes)
             {
-                String result = ""; 
-                foreach (var item in orgListBox_.SelectedItems)
+                try
                 {
-                    result += "\'" + orgNameId_[item.ToString()] + "\',";
-                }
-                result = result.TrimEnd(',');
+                    String result = "";
+                    foreach (var item in orgListBox_.SelectedItems)
+                    {
+                        result += "\'" + orgNameId_[item.ToString()] + "\',";
+                    }
+                    result = result.TrimEnd(',');
 
-                String dec = "decf" + decTypeDict_[basename_+decListBox_.SelectedItem.ToString()];
-                String ttnField, prod;
-                if (dec == "decf11")
-                {
-                    ttnField = "P214";
-                }
-                else
-                {
-                    ttnField = "P210";
-                }
-                if (prodCheckBox.Checked)
-                    prod = "ProdId";
-                else
-                    prod = "idPost";
+                    String dec = "decf" + decTypeDict_[_basename + decListBox_.SelectedItem.ToString()];
+                    String ttnField, prod;
+                    if (dec == "decf11")
+                    {
+                        ttnField = "P214";
+                    }
+                    else
+                    {
+                        ttnField = "P210";
+                    }
+                    if (prodCheckBox.Checked)
+                        prod = "ProdId";
+                    else
+                        prod = "idPost";
 
-                query("delete from " + dec + " where " + prod + " in (" + result + ")"
-                    + " and Hid = " + decListBox_.SelectedItem.ToString());
-                decListBox__SelectedIndexChanged(sender, e);
+                    query("delete from " + dec + " where " + prod + " in (" + result + ")"
+                        + " and Hid = " + decIdDict_[_basename + decListBox_.SelectedItem.ToString()]);
+                    decListBox__SelectedIndexChanged(sender, e);
+                }
+                catch (Exception ex) { }
             }
-            catch (Exception ex) { }
         }
         private void DelDec_Click(object sender, EventArgs e)
         {
-            try
-            {
-               
-                String dec = "decf" + decTypeDict_[basename_+decListBox_.SelectedItem.ToString()];
-                query("delete from " + dec + " where Hid = " + decListBox_.SelectedItem.ToString());
-                query("delete from decheader where id = " + decListBox_.SelectedItem.ToString());
 
+              if ( MessageBox.Show("Удалить декларацию", "Удаление большого объема данных", MessageBoxButtons.YesNo)
+                                     == System.Windows.Forms.DialogResult.Yes)
+              {
+                try
+                {
+               
+                    String dec = "decf" + decTypeDict_[_basename+decListBox_.SelectedItem.ToString()];
+                    query("delete from " + dec + " where Hid = " + decListBox_.SelectedItem.ToString());
+                    query("delete from decheader where id = " + decListBox_.SelectedItem.ToString());
+
+                }
+                catch (Exception ex) { }
+              }
             }
-            catch (Exception ex) { }
-        }
         private void bButton__Click(object sender, EventArgs e)
         {
-            bCombo.Items.Clear();
+            BaseFromComboBox.Items.Clear();
             openBaseDialog_ = new OpenFileDialog();
             openBaseDialog_.Filter = "SDF database | *.sdf";
             if (openBaseDialog_.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 try
                 {
-                    BaseListToCombo(bCombo, openBaseDialog_.FileName);
+                    BaseListToCombo(BaseFromComboBox, openBaseDialog_.FileName);
                     exbase_ = openBaseDialog_.FileName;
                     bLabel_.Text = exbase_;
-                    bCombo.Visible = true;
+                    BaseFromComboBox.Visible = true;
                 }
                 catch (Exception ex) { }
 
@@ -491,7 +523,7 @@ namespace Avalon
             String query = "SELECT c.INN, c.KPP, vidCode," + Volume + ",ProdId FROM " + tab + " AS dec "
                 + " JOIN wrk_Contragents as c ON dec.ProdId = c.Id "
                 + " AND dec.ttype = 1 "
-                + " AND dec.hid = " + box.SelectedItem.ToString()
+                + " AND dec.hid = " + decIdDict_[basename + box.SelectedItem.ToString()]
                 + " ORDER BY c.INN, c.KPP, vidCode ";
 
             DataRow[] dr = GetRow(query, basename);
@@ -596,8 +628,8 @@ namespace Avalon
         }
         private void bCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            GetParamFromBase(decTypeDict_[exbase_+bCombo.SelectedItem.ToString()],ref volumeEx_,exbase_,true, ref bCombo);
-            if (nBaseCombo.SelectedIndex != -1)
+            GetParamFromBase(decTypeDict_[exbase_+BaseFromComboBox.SelectedItem.ToString()],ref volumeEx_,exbase_,true, ref BaseFromComboBox);
+            if (BaseToComboBox.SelectedIndex != -1)
             {
                 ShowElems();
             }
@@ -605,8 +637,8 @@ namespace Avalon
         }
         private void nBaseCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            GetParamFromBase(decTypeDict_[basename_ + nBaseCombo.SelectedItem.ToString()], ref volumeNew_, basename_, false, ref nBaseCombo);
-            if (bCombo.SelectedIndex != -1)
+            GetParamFromBase(decTypeDict_[_basename + BaseToComboBox.SelectedItem.ToString()], ref volumeNew_, _basename, false, ref BaseToComboBox);
+            if (BaseFromComboBox.SelectedIndex != -1)
             {
                 ShowElems();
             }
@@ -634,7 +666,7 @@ namespace Avalon
             }
             String dec,series, column, values;
 
-            if (decTypeDict_[basename_ + nBaseCombo.SelectedItem.ToString()] == "11")
+            if (decTypeDict_[_basename + BaseToComboBox.SelectedItem.ToString()] == "11")
             {
                 series = "Hid,VidCode,ProdId,P106,P107,P108,P109,P110,P111,P112,P113,P114,P115,P116,P117,P118,P119,P120,ttype,idOrg";
                 values = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1)";
@@ -658,7 +690,7 @@ namespace Avalon
                         if (sp.Value.textBox.Text != NanVar)
                         {
                             queryx = "INSERT INTO " + dec + "(" + series
-                                + ") VALUES(" + nBaseCombo.SelectedItem.ToString() + "," + sp.Key + "," +
+                                + ") VALUES(" + BaseToComboBox.SelectedItem.ToString() + "," + sp.Key + "," +
                                 idDic[iter.Key] + ","+ sp.Value.textBox.Text + ","+ values;
                             query(queryx);
                         }
@@ -666,7 +698,7 @@ namespace Avalon
                     else
                     {
                         queryx = "UPDATE " + dec + " SET " + column + " = " + sp.Value.textBox.Text
-                            + "WHERE Hid = " + nBaseCombo.SelectedItem.ToString() 
+                            + "WHERE Hid = " + BaseToComboBox.SelectedItem.ToString() 
                             + " AND vidCode = " + sp.Key
                             + " AND ProdId = " + idDic[iter.Key]
                             + " AND ttype = 1";
@@ -675,5 +707,105 @@ namespace Avalon
                 }
             }
         }
+
+        private void ContragentBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Contragent contr = (Contragent) ContragentBox.SelectedItem;
+            _contragentsEditor.GetLicenceByContrId(contr.ContrId, ref LicenceBox);
+
+        }
+
+
+
+        bool INNButtonEffect;
+        int ixContragentBox;
+        private void INNButton_Click(object sender, EventArgs e)
+        {
+            if (!INNButtonEffect)
+            {
+                if (ContragentBox.SelectedIndex != -1)
+                {
+                    
+                    ixContragentBox = ContragentBox.SelectedIndex;
+
+                    /*Эффект*/
+                    INNButton.FlatAppearance.BorderSize = 1;
+                    INNButton.BackColor = Color.Silver;
+                    
+                    /*Тупо выбираем по ИНН элемента*/
+                    _contragentsEditor.ContragentsByInnInListBox(
+                        ((Contragent)ContragentBox.SelectedItem).INN,
+                        ref ContragentBox);
+
+                    INNButtonEffect = true;
+                }
+            }
+            else
+            {
+                /*Эффект*/
+                INNButton.FlatAppearance.BorderSize = 0;
+                INNButton.BackColor = Color.White;
+
+                /*Восстанавливаем все назад*/
+                _contragentsEditor.GetContragents(ref ContragentBox);
+                
+                INNButtonEffect = false;
+
+                ContragentBox.SetSelected(ixContragentBox,true);
+            }
+
+        }
+
+        private void ButtonAddOperation_Click(object sender, EventArgs e)
+        {
+            if (ComboBoxOperations.SelectedIndex == -1)
+                return;
+            Contragent con;
+            Licence lic;
+
+            /*Все ли в порядке с контрагентом*/
+            if (ContragentBox.SelectedIndex == -1)
+            {
+                con = null;
+            }
+            else
+            {
+                con = (Contragent)ContragentBox.SelectedItem;
+            }
+
+            /*Все ли в порядке с лицензией*/
+            if (LicenceBox.SelectedIndex == -1)
+            {
+                lic = null;
+            }
+            else
+            {
+                lic = (Licence)LicenceBox.SelectedItem;
+            }
+
+            _contragentsEditor.CreateOperation(con, lic, ((ContragentsEditor.ListBoxItem)ComboBoxOperations.SelectedItem).operation,
+                                                            textBoxVarVal.Text);
+            _contragentsEditor.GetOperations(ref OperationBox);
+        }
+
+        private void ComboBoxOperations_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            /*Обзовем метку сообразно ее функциям*/
+            ContragentsEditor.ListBoxItem lb = (ContragentsEditor.ListBoxItem)ComboBoxOperations.SelectedItem;
+            if (lb.operation == (int)OpList.RENAME_CONTRAGENT_BY_INN_KPP_REGION)
+            {
+                LabelVarVal.Text = "Общее имя ";
+                return;
+            }
+
+            LabelVarVal.Text = "";
+        }
+
+        private void ButtonExecute_Click(object sender, EventArgs e)
+        {
+            _contragentsEditor.RunOperations();
+        }
+
+
     }
 }

@@ -86,6 +86,7 @@
     <Compile Include="ContrAddForm.Designer.cs">
       <DependentUpon>ContrAddForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ContragentsEditor.cs" />
     <Compile Include="EndsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -110,11 +111,11 @@
     <Compile Include="FromText.Designer.cs">
       <DependentUpon>FromText.cs</DependentUpon>
     </Compile>
-    <Compile Include="GetSumContragents.cs">
+    <Compile Include="BaseEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GetSumContragents.Designer.cs">
-      <DependentUpon>GetSumContragents.cs</DependentUpon>
+    <Compile Include="BaseEditor.Designer.cs">
+      <DependentUpon>BaseEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -142,8 +143,8 @@
     <EmbeddedResource Include="FromText.resx">
       <DependentUpon>FromText.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="GetSumContragents.resx">
-      <DependentUpon>GetSumContragents.cs</DependentUpon>
+    <EmbeddedResource Include="BaseEditor.resx">
+      <DependentUpon>BaseEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

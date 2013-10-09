@@ -22,7 +22,6 @@ namespace Avalon
 
         private String GetOrgNameFromBase(String basename)
         {
-            
             string ConSrc = "DataSource ="+basename+"; Password=7338a7e6-fd3b-49d1-8d90-ddbbc1b39fa1";
             SqlCeConnection consrc = new SqlCeConnection(ConSrc);
             try

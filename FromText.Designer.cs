@@ -28,58 +28,58 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.button2 = new System.Windows.Forms.Button();
+            this.readFromFileButton = new System.Windows.Forms.Button();
+            this.isBaseNotWrite = new System.Windows.Forms.CheckBox();
+            this.addContragentsManualyButton = new System.Windows.Forms.Button();
             this.textBoxF11 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.button3 = new System.Windows.Forms.Button();
+            this.comboBoxF11Choosing = new System.Windows.Forms.ComboBox();
+            this.comboBoxF12Choosing = new System.Windows.Forms.ComboBox();
+            this.addContragentsByINNButton = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.ProgLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // button1
+            // readFromFileButton
             // 
-            this.button1.Location = new System.Drawing.Point(220, 31);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(95, 45);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Считать из файла";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.RecordButton_Click);
+            this.readFromFileButton.Location = new System.Drawing.Point(280, 31);
+            this.readFromFileButton.Name = "readFromFileButton";
+            this.readFromFileButton.Size = new System.Drawing.Size(95, 45);
+            this.readFromFileButton.TabIndex = 0;
+            this.readFromFileButton.Text = "Считать из файла";
+            this.readFromFileButton.UseVisualStyleBackColor = true;
+            this.readFromFileButton.Click += new System.EventHandler(this.RecordButton_Click);
             // 
-            // checkBox1
+            // isBaseNotWrite
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Checked = true;
-            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.Enabled = false;
-            this.checkBox1.Location = new System.Drawing.Point(332, 27);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(139, 17);
-            this.checkBox1.TabIndex = 3;
-            this.checkBox1.Text = "Не записывать в базу";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.isBaseNotWrite.AutoSize = true;
+            this.isBaseNotWrite.Checked = true;
+            this.isBaseNotWrite.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.isBaseNotWrite.Enabled = false;
+            this.isBaseNotWrite.Location = new System.Drawing.Point(392, 27);
+            this.isBaseNotWrite.Name = "isBaseNotWrite";
+            this.isBaseNotWrite.Size = new System.Drawing.Size(139, 17);
+            this.isBaseNotWrite.TabIndex = 3;
+            this.isBaseNotWrite.Text = "Не записывать в базу";
+            this.isBaseNotWrite.UseVisualStyleBackColor = true;
             // 
-            // button2
+            // addContragentsManualyButton
             // 
-            this.button2.Location = new System.Drawing.Point(332, 48);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(242, 28);
-            this.button2.TabIndex = 17;
-            this.button2.Text = "Заполнить контрагентов (без лицензий)";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.addContragentsManualyButton.Location = new System.Drawing.Point(392, 48);
+            this.addContragentsManualyButton.Name = "addContragentsManualyButton";
+            this.addContragentsManualyButton.Size = new System.Drawing.Size(242, 28);
+            this.addContragentsManualyButton.TabIndex = 17;
+            this.addContragentsManualyButton.Text = "Заполнить контрагентов (без лицензий)";
+            this.addContragentsManualyButton.UseVisualStyleBackColor = true;
+            this.addContragentsManualyButton.Click += new System.EventHandler(this.button2_Click);
             // 
             // textBoxF11
             // 
             this.textBoxF11.Location = new System.Drawing.Point(20, 2);
             this.textBoxF11.Name = "textBoxF11";
-            this.textBoxF11.Size = new System.Drawing.Size(295, 20);
+            this.textBoxF11.Size = new System.Drawing.Size(355, 20);
             this.textBoxF11.TabIndex = 15;
             this.textBoxF11.Text = "maintext.txt";
             // 
@@ -114,31 +114,32 @@
             this.textBox1.TabIndex = 12;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
-            // comboBox1
+            // comboBoxF11Choosing
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(162, 28);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(52, 21);
-            this.comboBox1.TabIndex = 18;
+            this.comboBoxF11Choosing.FormattingEnabled = true;
+            this.comboBoxF11Choosing.Location = new System.Drawing.Point(162, 28);
+            this.comboBoxF11Choosing.Name = "comboBoxF11Choosing";
+            this.comboBoxF11Choosing.Size = new System.Drawing.Size(112, 21);
+            this.comboBoxF11Choosing.TabIndex = 18;
+            this.comboBoxF11Choosing.SelectedIndexChanged += new System.EventHandler(this.comboBoxF11Choosing_SelectedIndexChanged);
             // 
-            // comboBox2
+            // comboBoxF12Choosing
             // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(162, 55);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(52, 21);
-            this.comboBox2.TabIndex = 19;
+            this.comboBoxF12Choosing.FormattingEnabled = true;
+            this.comboBoxF12Choosing.Location = new System.Drawing.Point(162, 55);
+            this.comboBoxF12Choosing.Name = "comboBoxF12Choosing";
+            this.comboBoxF12Choosing.Size = new System.Drawing.Size(112, 21);
+            this.comboBoxF12Choosing.TabIndex = 19;
             // 
-            // button3
+            // addContragentsByINNButton
             // 
-            this.button3.Location = new System.Drawing.Point(332, 2);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(242, 23);
-            this.button3.TabIndex = 20;
-            this.button3.Text = "Заполнить подразделения (без лицензий)";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.addContragentsByINNButton.Location = new System.Drawing.Point(392, 2);
+            this.addContragentsByINNButton.Name = "addContragentsByINNButton";
+            this.addContragentsByINNButton.Size = new System.Drawing.Size(242, 23);
+            this.addContragentsByINNButton.TabIndex = 20;
+            this.addContragentsByINNButton.Text = "Заполнить подразделения (без лицензий)";
+            this.addContragentsByINNButton.UseVisualStyleBackColor = true;
+            this.addContragentsByINNButton.Click += new System.EventHandler(this.button3_Click);
             // 
             // progressBar1
             // 
@@ -165,16 +166,16 @@
             this.ClientSize = new System.Drawing.Size(771, 443);
             this.Controls.Add(this.ProgLabel);
             this.Controls.Add(this.progressBar1);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.comboBox2);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.addContragentsByINNButton);
+            this.Controls.Add(this.comboBoxF12Choosing);
+            this.Controls.Add(this.comboBoxF11Choosing);
+            this.Controls.Add(this.addContragentsManualyButton);
             this.Controls.Add(this.textBoxF11);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.isBaseNotWrite);
+            this.Controls.Add(this.readFromFileButton);
             this.Name = "FromText";
             this.Text = "Из текстового файла";
             this.Load += new System.EventHandler(this.FromText_Load);
@@ -185,18 +186,18 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button readFromFileButton;
+        private System.Windows.Forms.CheckBox isBaseNotWrite;
+        private System.Windows.Forms.Button addContragentsManualyButton;
         private System.Windows.Forms.TextBox textBoxF11;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textBox1;
         private System.IO.StreamWriter erfile;
         private System.IO.StreamWriter noform;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.ComboBox comboBox2;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.ComboBox comboBoxF11Choosing;
+        private System.Windows.Forms.ComboBox comboBoxF12Choosing;
+        private System.Windows.Forms.Button addContragentsByINNButton;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label ProgLabel;
     }

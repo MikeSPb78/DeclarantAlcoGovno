@@ -1363,9 +1363,40 @@ namespace Avalon
 
 
         }
+    }
 
+    /*Простой класс с возвращением результата и т.д.*/
+    class SqlCeWork
+    {
+        String SqlCePassword = "7338a7e6-fd3b-49d1-8d90-ddbbc1b39fa1";
 
+        SqlCeConnection con;
 
+        public SqlCeWork(string basename)
+        {
+            string ConSrc = "DataSource =" + basename + "; Password="+SqlCePassword;
+            con = new SqlCeConnection(ConSrc);
+        }
 
+        /*ХЗ. Почему так просто не выхоит по-другому сделать запрос*/
+        public void query(string query)
+        {
+            DataSet DS = new DataSet("table");
+            SqlCeCommand cmd = new SqlCeCommand(query, con);
+            SqlCeDataAdapter sda = new SqlCeDataAdapter(cmd);
+
+            sda.Fill(DS, "table");     
+        }
+
+        public DataRow[] GetRow(string query)
+        {
+            DataSet DS = new DataSet("table");
+            SqlCeCommand cmd = new SqlCeCommand(query, con);
+            SqlCeDataAdapter sda = new SqlCeDataAdapter(cmd);
+
+            sda.Fill(DS, "table");
+            return DS.Tables["table"].Select("");
+
+        }
     }
 }

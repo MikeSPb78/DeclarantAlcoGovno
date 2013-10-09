@@ -19,6 +19,7 @@ namespace Avalon
         List<string> TTN;
         List<string> DTTN;
         String basename;
+        Dictionary<String, String> DeclarationHelper;
         int countOfLines;
         int line;
         ~FromText()
@@ -36,20 +37,25 @@ namespace Avalon
             progressBar1.Minimum = 0;
             progressBar1.Maximum = 100;
             countOfLines = 0;
+            DeclarationHelper = new Dictionary<string, string>();
 
             
             try
             {
-                DataRow[] dec12  = GetRow("select * from decheader where type_id = 12");
+                DataRow[] dec12 = GetRow("select id, PrizPeriod, Yearotch from decheader where type_id = 12");
                 for (int i = 0; i < dec12.Count(); i++)
                 {
-                    comboBox2.Items.Add(dec12[i][0]);
+                    String index = dec12[i][0].ToString() + " - " + (Convert.ToInt32(dec12[i][1].ToString()) / 3).ToString() + "кв. " + dec12[i][2] + " год";
+                    DeclarationHelper[index] = dec12[i][0].ToString();
+                    comboBoxF12Choosing.Items.Add(index);
                 }
 
-                DataRow[] dec11 = GetRow("select * from decheader where type_id = 11");
+                DataRow[] dec11 = GetRow("select id, PrizPeriod, Yearotch from decheader where type_id = 11");
                 for (int i = 0; i < dec11.Count(); i++)
                 {
-                    comboBox1.Items.Add(dec11[i][0]);
+                    String index = dec11[i][0].ToString() + " - " + (Convert.ToInt32(dec11[i][1].ToString()) / 3).ToString() + "кв. " + dec11[i][2] + " год";
+                    DeclarationHelper[index] = dec11[i][0].ToString();
+                    comboBoxF11Choosing.Items.Add(index);
                 }
             } catch (Exception ex){
                 MessageBox.Show("Ошибка запроса/доступа к ресурсу: \n" + ex.Message);
@@ -120,7 +126,7 @@ namespace Avalon
 	        timer.Start();
   
             textBox1.Text = "";
-            if (checkBox1.Checked)
+            if (isBaseNotWrite.Checked)
             {
                 textBox1.Text += "\r\nЗАПИСЬ В БАЗУ ОТКЛЮЧЕНА \r\n\r\n";
 
@@ -131,7 +137,7 @@ namespace Avalon
             DataRow[] dr = GetRow("select id,INN,KPP from wrk_contragents");
             DataRow[] DTTN11, DTTN12;
 
-            if (checkBox1.Checked)
+            if (isBaseNotWrite.Checked)
             {
                 TTN = new List<string>();
                 DTTN = new List<string>();
@@ -195,7 +201,7 @@ namespace Avalon
                 }
                 for (int i = 0; i < 8; i++) rec[i] = rec[i].Trim();
 
-                //Проверка на олигофренов, не осиливших форматирование в Excel
+                //Проверка на не осиливших форматирование в Excel
                 if ((rec[1].Length == 9) && (rec[2].Length == 8))
                 {
                     rec[1] = "0" + rec[1];
@@ -209,7 +215,7 @@ namespace Avalon
                 }
                 
                 //Проверяем наличие строк в базе
-                if (checkBox1.Checked)
+                if (isBaseNotWrite.Checked)
                 {
                     string st = rec[5] + "|" + rec[6];
                     if (TTN.Contains(st))
@@ -264,7 +270,7 @@ namespace Avalon
                     continue;
                 }
 
-                if (!checkBox1.Checked)
+                if (!isBaseNotWrite.Checked)
                 {
 
                     
@@ -276,14 +282,14 @@ namespace Avalon
                         progressBar1.Value = line * 100 / countOfLines;
                         if (rec[0][0] == '5')
                         {//Это декларация по пиву и пивным продуктам не нужна ни лицензия, ничего
-                            if (comboBox2.SelectedItem.ToString().Length == 0) break;
-                            string CommandText = "insert into DecF12 ([Hid],[vidCode],[ProdId],[idPost],[P29],[P210],[P212],[TTYPE],[idOrg]) values (" + comboBox2.SelectedItem.ToString() + ",'" + rec[0] + "'," + prod + "," + post /*+ "," + indL[SrcRows[i][5]]*/ + ",'" + rec[5] + "','" + rec[6] + "'," + rec[7].Replace(",", ".") + ",2,1)";
+                            if (comboBoxF12Choosing.SelectedItem.ToString().Length == 0) break;
+                            string CommandText = "insert into DecF12 ([Hid],[vidCode],[ProdId],[idPost],[P29],[P210],[P212],[TTYPE],[idOrg]) values (" + DeclarationHelper[comboBoxF12Choosing.SelectedItem.ToString()] + ",'" + rec[0] + "'," + prod + "," + post /*+ "," + indL[SrcRows[i][5]]*/ + ",'" + rec[5] + "','" + rec[6] + "'," + rec[7].Replace(",", ".") + ",2,1)";
                             query(CommandText);
                         }
                         else
                         {//Это декларация по остальному алкоголю
-                            if (comboBox1.SelectedItem.ToString().Length == 0) break;
-                            string CommandText = "insert into DecF11 ([Hid],[vidCode],[ProdId],[idPost],[idLic],[P213],[P214],[P216],[TTYPE],[idOrg]) values (" + comboBox1.SelectedItem.ToString() + ",'" + rec[0] + "'," + prod + "," + post + "," + lcs.Trim() + ",'" + rec[5] + "','" + rec[6] + "'," + rec[7].Replace(",", ".") + ",2,1)";
+                            if (comboBoxF11Choosing.SelectedItem.ToString().Length == 0) break;
+                            string CommandText = "insert into DecF11 ([Hid],[vidCode],[ProdId],[idPost],[idLic],[P213],[P214],[P216],[TTYPE],[idOrg]) values (" + DeclarationHelper[comboBoxF11Choosing.SelectedItem.ToString()] + ",'" + rec[0] + "'," + prod + "," + post + "," + lcs.Trim() + ",'" + rec[5] + "','" + rec[6] + "'," + rec[7].Replace(",", ".") + ",2,1)";
                             query(CommandText);
                         }
                     }
@@ -294,7 +300,7 @@ namespace Avalon
                 }
 
             }
-            if (checkBox1.Checked)
+            if (isBaseNotWrite.Checked)
             {
                 ViewRec vr = new ViewRec(DTTN);
                 vr.Show();
@@ -305,7 +311,7 @@ namespace Avalon
             textBox1.Height += 30;
             timer.Stop();
             ProgLabel.Text = "";
-            checkBox1.Enabled = true;
+            isBaseNotWrite.Enabled = true;
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -430,7 +436,7 @@ namespace Avalon
                 }
 
             }
-            checkBox1.Enabled = true;
+            isBaseNotWrite.Enabled = true;
         }
 
         private void FromText_Load(object sender, EventArgs e)
@@ -439,6 +445,11 @@ namespace Avalon
         }
 
         private void progressBar1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBoxF11Choosing_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }
